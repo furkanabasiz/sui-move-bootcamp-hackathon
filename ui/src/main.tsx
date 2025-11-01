@@ -1,41 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
-import { getFullnodeUrl } from '@mysten/sui/client';
-import { Toaster } from 'sonner';
-import '@mysten/dapp-kit/dist/index.css';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "@mysten/dapp-kit/dist/index.css";
+import "@radix-ui/themes/styles.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5,
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+import { SuiClientProvider, WalletProvider } from "@mysten/dapp-kit";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Theme } from "@radix-ui/themes";
+import App from "./App.tsx";
+import { networkConfig } from "./networkConfig.ts";
 
-const networks = {
-  testnet: { url: getFullnodeUrl('testnet') },
-  mainnet: { url: getFullnodeUrl('mainnet') },
-  devnet: { url: getFullnodeUrl('devnet') },
-};
+const queryClient = new QueryClient();
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <SuiClientProvider networks={networks} defaultNetwork="testnet">
-        <WalletProvider autoConnect>
-          <BrowserRouter>
+    <Theme appearance="dark">
+      <QueryClientProvider client={queryClient}>
+        <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
+          <WalletProvider autoConnect>
             <App />
-            <Toaster position="top-right" richColors />
-          </BrowserRouter>
-        </WalletProvider>
-      </SuiClientProvider>
-    </QueryClientProvider>
-  </React.StrictMode>
+          </WalletProvider>
+        </SuiClientProvider>
+      </QueryClientProvider>
+    </Theme>
+  </React.StrictMode>,
 );

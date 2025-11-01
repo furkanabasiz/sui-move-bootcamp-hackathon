@@ -1,19 +1,15 @@
 module voting::voting {
-    use sui::object::{Self, ID, UID};
-    use sui::tx_context::{Self, TxContext};
-    use sui::transfer;
     use sui::clock::{Self, Clock};
     use sui::table::{Self, Table};
     use sui::vec_map::{Self, VecMap};
     use std::string::String;
-    use std::option::{Self, Option};
-    use std::vector;
-    
     use voting::events;
     use voting::helpers;
     use voting::admin::{Self, PlatformConfig};
 
     /// Main voting object
+    /// 
+    /// Belki display buraya
     public struct Voting has key, store {
         id: UID,
         creator: address,
@@ -29,25 +25,15 @@ module voting::voting {
         total_votes: u64
     }
 
-    /// Voter receipt (optional NFT proof of voting)
-    public struct VoteReceipt has key, store {
-        id: UID,
-        voting_id: ID,
-        voter: address,
-        option_index: u64,
-        voted_at: u64
-    }
-
     /// Error codes
     const E_ALREADY_VOTED: u64 = 10;
     const E_VOTING_CLOSED: u64 = 11;
     const E_VOTING_ENDED: u64 = 12;
     const E_NOT_CREATOR: u64 = 13;
-    const E_VOTING_NOT_CLOSED: u64 = 14;
     const E_VOTING_STILL_ACTIVE: u64 = 15;
 
     /// Create a new voting
-    public entry fun create_voting(
+    public fun create_voting(
         config: &PlatformConfig,
         question: String,
         description: Option<String>,
@@ -106,7 +92,7 @@ module voting::voting {
     }
 
     /// Cast a vote
-    public entry fun vote(
+    public fun vote(
         config: &PlatformConfig,
         voting: &mut Voting,
         option_index: u64,
@@ -136,7 +122,7 @@ module voting::voting {
     }
 
     /// Close voting (creator only)
-    public entry fun close_voting(
+    public fun close_voting(
         voting: &mut Voting,
         clock: &Clock,
         ctx: &mut TxContext
@@ -157,7 +143,7 @@ module voting::voting {
     }
 
     /// Delete voting (creator only, must be closed or ended)
-    public entry fun delete_voting(
+    public fun delete_voting(
         voting: Voting,
         clock: &Clock,
         ctx: &mut TxContext
@@ -195,7 +181,7 @@ module voting::voting {
         
         // Manually destroy vote_counts
         while (!vec_map::is_empty(&vote_counts)) {
-            let (key, _) = vec_map::pop(&mut vote_counts);
+            let (_key, _) = vec_map::pop(&mut vote_counts);
         };
         vec_map::destroy_empty(vote_counts);
         

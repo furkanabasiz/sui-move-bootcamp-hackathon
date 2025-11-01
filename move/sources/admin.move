@@ -41,6 +41,50 @@ module voting::admin {
         transfer::share_object(config);
     }
 
+
+    /// Update platform fee (admin only)
+    public fun update_platform_fee(
+        _: &AdminCap,
+        config: &mut PlatformConfig,
+        new_fee: u64,
+        ctx: &mut TxContext
+    ) {
+        assert_admin(config, ctx.sender());
+        assert!(new_fee <= MAX_PLATFORM_FEE, E_INVALID_FEE);
+        config.platform_fee = new_fee;
+    }
+
+    /// Pause platform (admin only)
+    public fun pause_platform(
+        _: &AdminCap,
+        config: &mut PlatformConfig,
+        ctx: &mut TxContext
+    ) {
+        assert_admin(config, tx_context::sender(ctx));
+        config.paused = true;
+    }
+
+    /// Unpause platform (admin only)
+    public fun unpause_platform(
+        _: &AdminCap,
+        config: &mut PlatformConfig,
+        ctx: &mut TxContext
+    ) {
+        assert_admin(config, tx_context::sender(ctx));
+        config.paused = false;
+    }
+
+    /// Transfer admin role (admin only)
+    public fun transfer_admin(
+        _: &AdminCap,
+        config: &mut PlatformConfig,
+        new_admin: address,
+        ctx: &mut TxContext
+    ) {
+        assert_admin(config, tx_context::sender(ctx));
+        config.admin = new_admin;
+    }
+
     /// Check if sender is admin
     public fun is_admin(config: &PlatformConfig, sender: address): bool {
         config.admin == sender
@@ -61,57 +105,14 @@ module voting::admin {
         assert!(!config.paused, E_PLATFORM_PAUSED);
     }
 
-    /// Get platform fee
-    public fun get_platform_fee(config: &PlatformConfig): u64 {
-        config.platform_fee
-    }
-
-    /// Update platform fee (admin only)
-    public entry fun update_platform_fee(
-        _admin_cap: &AdminCap,
-        config: &mut PlatformConfig,
-        new_fee: u64,
-        ctx: &mut TxContext
-    ) {
-        assert_admin(config, tx_context::sender(ctx));
-        assert!(new_fee <= MAX_PLATFORM_FEE, E_INVALID_FEE);
-        config.platform_fee = new_fee;
-    }
-
-    /// Pause platform (admin only)
-    public entry fun pause_platform(
-        _admin_cap: &AdminCap,
-        config: &mut PlatformConfig,
-        ctx: &mut TxContext
-    ) {
-        assert_admin(config, tx_context::sender(ctx));
-        config.paused = true;
-    }
-
-    /// Unpause platform (admin only)
-    public entry fun unpause_platform(
-        _admin_cap: &AdminCap,
-        config: &mut PlatformConfig,
-        ctx: &mut TxContext
-    ) {
-        assert_admin(config, tx_context::sender(ctx));
-        config.paused = false;
-    }
-
-    /// Transfer admin role (admin only)
-    public entry fun transfer_admin(
-        _admin_cap: &AdminCap,
-        config: &mut PlatformConfig,
-        new_admin: address,
-        ctx: &mut TxContext
-    ) {
-        assert_admin(config, tx_context::sender(ctx));
-        config.admin = new_admin;
-    }
-
     /// Get admin address
     public fun get_admin(config: &PlatformConfig): address {
         config.admin
+    }
+
+    /// Get platform fee
+    public fun get_platform_fee(config: &PlatformConfig): u64 {
+        config.platform_fee
     }
 
     #[test_only]
