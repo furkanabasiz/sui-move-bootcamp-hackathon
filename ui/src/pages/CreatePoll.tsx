@@ -88,7 +88,7 @@ export function CreatePoll() {
         <Heading size="8">Create New Poll</Heading>
 
         <form onSubmit={handleSubmit}>
-          <Card p="6">
+          <Card style={{ padding: "1.5rem" }}>
             <Flex direction="column" gap="4">
               <Box>
                 <Text as="label" size="2" weight="bold" mb="2">
