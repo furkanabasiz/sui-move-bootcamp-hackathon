@@ -26,11 +26,11 @@ module voting::voting {
     }
 
     /// Error codes
-    const E_ALREADY_VOTED: u64 = 10;
-    const E_VOTING_CLOSED: u64 = 11;
-    const E_VOTING_ENDED: u64 = 12;
-    const E_NOT_CREATOR: u64 = 13;
-    const E_VOTING_STILL_ACTIVE: u64 = 15;
+    const EAlreadyVoted: u64 = 10;
+    const EVotingClosed: u64 = 11;
+    const EVotingEnded: u64 = 12;
+    const ENotCreator: u64 = 13;
+    const EVotingStillActive: u64 = 15;
 
     /// Create a new voting
     public fun create_voting(
@@ -103,9 +103,9 @@ module voting::voting {
 
         let sender = tx_context::sender(ctx);
         
-        assert!(!voting.is_closed, E_VOTING_CLOSED);
-        assert!(!helpers::is_voting_ended(&voting.end_time, clock), E_VOTING_ENDED);
-        assert!(!table::contains(&voting.voters, sender), E_ALREADY_VOTED);
+        assert!(!voting.is_closed, EVotingClosed);
+        assert!(!helpers::is_voting_ended(&voting.end_time, clock), EVotingEnded);
+        assert!(!table::contains(&voting.voters, sender), EAlreadyVoted);
         
         helpers::validate_option_index(option_index, vector::length(&voting.options));
 
@@ -129,8 +129,8 @@ module voting::voting {
     ) {
         let sender = tx_context::sender(ctx);
         
-        assert!(voting.creator == sender, E_NOT_CREATOR);
-        assert!(!voting.is_closed, E_VOTING_CLOSED);
+        assert!(voting.creator == sender, ENotCreator);
+        assert!(!voting.is_closed, EVotingClosed);
 
         voting.is_closed = true;
 
@@ -150,10 +150,10 @@ module voting::voting {
     ) {
         let sender = tx_context::sender(ctx);
         
-        assert!(voting.creator == sender, E_NOT_CREATOR);
+        assert!(voting.creator == sender, ENotCreator);
         assert!(
             voting.is_closed || helpers::is_voting_ended(&voting.end_time, clock),
-            E_VOTING_STILL_ACTIVE
+            EVotingStillActive
         );
 
         events::emit_voting_deleted(

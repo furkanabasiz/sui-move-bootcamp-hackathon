@@ -3,8 +3,6 @@ module voting::voting_tests {
     use sui::test_scenario::{Self as ts, Scenario};
     use sui::clock::{Self, Clock};
     use std::string::{Self, String};
-    use std::option;
-    use std::vector;
     
     use voting::voting::{Self, Voting};
     use voting::admin::{Self, PlatformConfig, AdminCap};
@@ -17,13 +15,13 @@ module voting::voting_tests {
     const VOTER3: address = @0xB3;
 
     // Error codes (copied from source modules for testing)
-    const E_INVALID_OPTIONS_COUNT: u64 = 1;
-    const E_INVALID_OPTION_INDEX: u64 = 2;
-    const E_DUPLICATE_OPTION: u64 = 4;
-    const E_ALREADY_VOTED: u64 = 10;
-    const E_VOTING_CLOSED: u64 = 11;
-    const E_VOTING_ENDED: u64 = 12;
-    const E_NOT_CREATOR: u64 = 13;
+    const EInvalidOptionsCount: u64 = 1;
+    const EInvalidOptionIndex: u64 = 2;
+    const EDuplicateOption: u64 = 4;
+    const EAlreadyVoted: u64 = 10;
+    const EVotingClosed: u64 = 11;
+    const EVotingEnded: u64 = 12;
+    const ENotCreator: u64 = 13;
 
     // Helper function to create test scenario
     fun setup_test(): Scenario {
@@ -91,7 +89,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_INVALID_OPTIONS_COUNT)]
+    #[expected_failure(abort_code = EInvalidOptionsCount)]
     fun test_create_voting_insufficient_options() {
         let mut scenario = setup_test();
         
@@ -120,7 +118,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_DUPLICATE_OPTION)]
+    #[expected_failure(abort_code = EDuplicateOption)]
     fun test_create_voting_duplicate_options() {
         let mut scenario = setup_test();
         
@@ -233,7 +231,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_ALREADY_VOTED)]
+    #[expected_failure(abort_code = EAlreadyVoted)]
     fun test_double_voting_fails() {
         let mut scenario = setup_test();
         create_test_voting(&mut scenario);
@@ -268,7 +266,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_INVALID_OPTION_INDEX)]
+    #[expected_failure(abort_code = EInvalidOptionIndex)]
     fun test_vote_invalid_option() {
         let mut scenario = setup_test();
         create_test_voting(&mut scenario);
@@ -325,7 +323,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_NOT_CREATOR)]
+    #[expected_failure(abort_code = ENotCreator)]
     fun test_close_voting_non_creator_fails() {
         let mut scenario = setup_test();
         create_test_voting(&mut scenario);
@@ -345,7 +343,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_VOTING_CLOSED)]
+    #[expected_failure(abort_code = EVotingClosed)]
     fun test_vote_after_close_fails() {
         let mut scenario = setup_test();
         create_test_voting(&mut scenario);
@@ -426,7 +424,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_VOTING_ENDED)]
+    #[expected_failure(abort_code = EVotingEnded)]
     fun test_vote_after_timelock_fails() {
         let mut scenario = setup_test();
         
@@ -505,7 +503,7 @@ module voting::voting_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_NOT_CREATOR)]
+    #[expected_failure(abort_code = ENotCreator)]
     fun test_delete_voting_non_creator_fails() {
         let mut scenario = setup_test();
         create_test_voting(&mut scenario);

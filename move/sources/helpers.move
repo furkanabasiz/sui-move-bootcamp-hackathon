@@ -6,33 +6,33 @@ module voting::helpers {
     use std::vector;
 
     /// Error codes
-    const E_INVALID_OPTIONS_COUNT: u64 = 1;
-    const E_INVALID_OPTION_INDEX: u64 = 2;
-    const E_INVALID_END_TIME: u64 = 3;
-    const E_DUPLICATE_OPTION: u64 = 4;
-    const E_EMPTY_QUESTION: u64 = 5;
-    const E_EMPTY_OPTION: u64 = 6;
+    const EInvalidOptionsCount: u64 = 1;
+    const EInvalidOptionIndex: u64 = 2;
+    const EInvalidEndTime: u64 = 3;
+    const EDuplicateOption: u64 = 4;
+    const EEmptyQuestion: u64 = 5;
+    const EEmptyOption: u64 = 6;
 
     /// Constants
-    const MIN_OPTIONS: u64 = 2;
-    const MAX_OPTIONS: u64 = 100;
+    const MinOptions: u64 = 2;
+    const MaxOptions: u64 = 100;
 
     /// Validate that options count is at least 2
     public fun validate_options_count(count: u64) {
-        assert!(count >= MIN_OPTIONS, E_INVALID_OPTIONS_COUNT);
-        assert!(count <= MAX_OPTIONS, E_INVALID_OPTIONS_COUNT);
+        assert!(count >= MinOptions, EInvalidOptionsCount);
+        assert!(count <= MaxOptions, EInvalidOptionsCount);
     }
 
     /// Validate option index is within bounds
     public fun validate_option_index(index: u64, total_options: u64) {
-        assert!(index < total_options, E_INVALID_OPTION_INDEX);
+        assert!(index < total_options, EInvalidOptionIndex);
     }
 
     /// Validate end time is in the future (if provided)
     public fun validate_end_time(end_time: &Option<u64>, clock: &Clock) {
         if (option::is_some(end_time)) {
             let time = *option::borrow(end_time);
-            assert!(time > clock::timestamp_ms(clock), E_INVALID_END_TIME);
+            assert!(time > clock::timestamp_ms(clock), EInvalidEndTime);
         }
     }
 
@@ -63,12 +63,12 @@ module voting::helpers {
 
     /// Validate question is not empty
     public fun validate_question(question: &String) {
-        assert!(std::string::length(question) > 0, E_EMPTY_QUESTION);
+        assert!(std::string::length(question) > 0, EEmptyQuestion);
     }
 
     /// Validate option is not empty
     public fun validate_option(option: &String) {
-        assert!(std::string::length(option) > 0, E_EMPTY_OPTION);
+        assert!(std::string::length(option) > 0, EEmptyOption);
     }
 
     /// Check for duplicate options
@@ -82,7 +82,7 @@ module voting::helpers {
             
             while (j < len) {
                 let option2 = vector::borrow(options, j);
-                assert!(option1 != option2, E_DUPLICATE_OPTION);
+                assert!(option1 != option2, EDuplicateOption);
                 j = j + 1;
             };
             

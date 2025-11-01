@@ -3,9 +3,7 @@ module voting::integration_tests {
     use sui::test_scenario::{Self as ts, Scenario};
     use sui::clock::{Self, Clock};
     use std::string::{Self, String};
-    use std::option;
-    use std::vector;
-    
+ 
     use voting::voting::{Self, Voting};
     use voting::admin::{Self, PlatformConfig, AdminCap};
 
@@ -19,7 +17,7 @@ module voting::integration_tests {
     const VOTER5: address = @0xB5;
 
     // Error codes
-    const E_PLATFORM_PAUSED: u64 = 101;
+    const EPlatformPaused: u64 = 101;
 
     fun setup_test(): Scenario {
         let mut scenario = ts::begin(ADMIN);
@@ -220,7 +218,7 @@ module voting::integration_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_PLATFORM_PAUSED)]
+    #[expected_failure(abort_code = EPlatformPaused)]
     fun test_cannot_create_voting_when_paused() {
         let mut scenario = setup_test();
         
@@ -244,7 +242,7 @@ module voting::integration_tests {
     }
 
     #[test]
-    #[expected_failure(abort_code = E_PLATFORM_PAUSED)]
+    #[expected_failure(abort_code = EPlatformPaused)]
     fun test_cannot_vote_when_paused() {
         let mut scenario = setup_test();
         

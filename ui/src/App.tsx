@@ -1,6 +1,10 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConnectButton } from "@mysten/dapp-kit";
 import { Box, Container, Flex, Heading } from "@radix-ui/themes";
-import { WalletStatus } from "./WalletStatus";
+import { Toaster } from "sonner";
+import { Home } from "./pages/Home";
+import { CreatePoll } from "./pages/CreatePoll";
+import { PollDetails } from "./pages/PollDetails";
 
 function App() {
   return (
@@ -15,7 +19,7 @@ function App() {
         }}
       >
         <Box>
-          <Heading>dApp Starter Template</Heading>
+          <Heading>Voting Platform</Heading>
         </Box>
 
         <Box>
@@ -23,15 +27,15 @@ function App() {
         </Box>
       </Flex>
       <Container>
-        <Container
-          mt="5"
-          pt="2"
-          px="4"
-          style={{ background: "var(--gray-a2)", minHeight: 500 }}
-        >
-          <WalletStatus />
-        </Container>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/create" element={<CreatePoll />} />
+            <Route path="/poll/:id" element={<PollDetails />} />
+          </Routes>
+        </BrowserRouter>
       </Container>
+      <Toaster position="top-right" />
     </>
   );
 }
