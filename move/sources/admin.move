@@ -17,12 +17,12 @@ module voting::admin {
     }
 
     /// Error codes
-    const E_NOT_ADMIN: u64 = 100;
-    const E_PLATFORM_PAUSED: u64 = 101;
-    const E_INVALID_FEE: u64 = 102;
+    const ENotAdmin: u64 = 100;
+    const EPlatformPaused: u64 = 101;
+    const EInvalidFee: u64 = 102;
 
     /// Maximum platform fee (10%)
-    const MAX_PLATFORM_FEE: u64 = 1000;
+    const MaxPlatformFee: u64 = 1000;
 
     /// Initialize the admin module - called once during publishing
     fun init(ctx: &mut TxContext) {
@@ -50,7 +50,7 @@ module voting::admin {
         ctx: &mut TxContext
     ) {
         assert_admin(config, ctx.sender());
-        assert!(new_fee <= MAX_PLATFORM_FEE, E_INVALID_FEE);
+        assert!(new_fee <= MaxPlatformFee, EInvalidFee);
         config.platform_fee = new_fee;
     }
 
@@ -92,7 +92,7 @@ module voting::admin {
 
     /// Assert sender is admin
     public fun assert_admin(config: &PlatformConfig, sender: address) {
-        assert!(is_admin(config, sender), E_NOT_ADMIN);
+        assert!(is_admin(config, sender), ENotAdmin);
     }
 
     /// Check if platform is paused
@@ -102,7 +102,7 @@ module voting::admin {
 
     /// Assert platform is not paused
     public fun assert_not_paused(config: &PlatformConfig) {
-        assert!(!config.paused, E_PLATFORM_PAUSED);
+        assert!(!config.paused, EPlatformPaused);
     }
 
     /// Get admin address
